@@ -6,19 +6,14 @@ import re
 import json
 from collections import defaultdict
 from collections import OrderedDict
+from keywords_extract_base import KeywordExtract
+from keywords_extract_base import _get_module_path
 import math
 
-class KeywordExtract(object):
-    stop_words = {}
-    min_term_len = 2
-    def term_len(self, term):
-        return len(term.decode('UTF-8', 'ignore'))
-    def __init__(self, stop_words_dict=""):
-        if stop_words_dict != "":
-            for i in open(stop_words_dict):
-                self.stop_words[i.strip().split('\t')[0]] = 0
-
 class TextRank(KeywordExtract):
+    ''' 
+    实现textrank算法
+    '''
     window_size = 5
     iter_times = 20
     p = 0.85
@@ -92,7 +87,6 @@ class TextRank(KeywordExtract):
             idx = idx + 1
         return key_words_ret
 
-
 class TfIdf(KeywordExtract):
     doc_total = 60496
     
@@ -102,7 +96,7 @@ class TfIdf(KeywordExtract):
     def __init__(self, idf_filename="", stopword_file=""):
         KeywordExtract.__init__(self, stopword_file)
         if idf_filename != "":
-            for line in open(idf_filename):
+            for line in open(_get_module_path(idf_filename)):
                 token_list = line.strip().split('\t')
                 if len(token_list) == 2:
                     self.idf_dict[token_list[0]] = float(token_list[1])
